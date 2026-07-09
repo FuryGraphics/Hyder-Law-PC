@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
-import { toast } from "sonner";
+import { useEffect } from "react";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import SEO from "@/components/SEO";
 import Breadcrumb from "@/components/Breadcrumb";
 import { PageHero, FadeIn, SectionHeading } from "@/components/Sections";
 import { FIRM } from "@/lib/siteData";
 
+const CASECLIMB_EMBED_SRC = "https://services.caseclimb.com/js/form_embed.js";
+
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    matterType: "",
-    message: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
+  // Load the CaseClimb form embed script (handles iframe auto-resizing).
+  useEffect(() => {
+    if (document.querySelector(`script[src="${CASECLIMB_EMBED_SRC}"]`)) return;
+    const script = document.createElement("script");
+    script.src = CASECLIMB_EMBED_SRC;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   const schema = {
     "@context": "https://schema.org",
@@ -29,23 +30,6 @@ export default function Contact() {
       addressRegion: "MI",
       postalCode: "48161",
     },
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    // Simulate form submission
-    setTimeout(() => {
-      setSubmitting(false);
-      toast.success("Thank you! Your message has been received. We'll contact you shortly.");
-      setFormData({ name: "", email: "", phone: "", matterType: "", message: "" });
-    }, 1500);
   };
 
   return (
@@ -75,99 +59,29 @@ export default function Contact() {
                   eyebrow="Send a Message"
                   title="Tell Us About Your Case"
                 />
-                <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-[#707070] mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full bg-[#111] border border-white/10 px-4 py-3 text-[#E8E8E8] focus:border-[#C9A84C] focus:outline-none transition-colors"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-[#707070] mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full bg-[#111] border border-white/10 px-4 py-3 text-[#E8E8E8] focus:border-[#C9A84C] focus:outline-none transition-colors"
-                        placeholder="you@email.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-[#707070] mb-2">
-                        Phone
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full bg-[#111] border border-white/10 px-4 py-3 text-[#E8E8E8] focus:border-[#C9A84C] focus:outline-none transition-colors"
-                        placeholder="(734) 000-0000"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-[#707070] mb-2">
-                      Matter Type
-                    </label>
-                    <select
-                      name="matterType"
-                      value={formData.matterType}
-                      onChange={handleChange}
-                      className="w-full bg-[#111] border border-white/10 px-4 py-3 text-[#E8E8E8] focus:border-[#C9A84C] focus:outline-none transition-colors"
-                    >
-                      <option value="">Select a type...</option>
-                      <option value="criminal-defense">Criminal Defense</option>
-                      <option value="owi-dui">OWI / DUI</option>
-                      <option value="drug-charges">Drug Charges</option>
-                      <option value="personal-injury">Personal Injury</option>
-                      <option value="family-law">Family Law</option>
-                      <option value="civil-litigation">Civil Litigation</option>
-                      <option value="real-estate">Real Estate</option>
-                      <option value="estate-planning">Estate Planning</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-[#707070] mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      name="message"
-                      required
-                      rows={5}
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="w-full bg-[#111] border border-white/10 px-4 py-3 text-[#E8E8E8] focus:border-[#C9A84C] focus:outline-none transition-colors resize-none"
-                      placeholder="Briefly describe your situation..."
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="btn-gold w-full disabled:opacity-60"
-                  >
-                    {submitting ? "Sending..." : "Send Message"}
-                    {!submitting && <Send size={16} />}
-                  </button>
-                  <p className="text-xs text-[#505050] text-center">
+                <div className="mt-8">
+                  <iframe
+                    src="https://services.caseclimb.com/widget/form/2ObUM7W6BX0UIKI83O4q"
+                    style={{ width: "100%", height: "600px", border: "none", borderRadius: "10px" }}
+                    id="inline-2ObUM7W6BX0UIKI83O4q"
+                    data-layout="{'id':'INLINE'}"
+                    data-trigger-type="alwaysShow"
+                    data-trigger-value=""
+                    data-activation-type="alwaysActivated"
+                    data-activation-value=""
+                    data-deactivation-type="neverDeactivate"
+                    data-deactivation-value=""
+                    data-form-name="Website Form (Hyder Law, PC)"
+                    data-height="541"
+                    data-layout-iframe-id="inline-2ObUM7W6BX0UIKI83O4q"
+                    data-form-id="2ObUM7W6BX0UIKI83O4q"
+                    title="Website Form (Hyder Law, PC)"
+                  />
+                  <p className="mt-4 text-xs text-[#505050] text-center">
                     Submitting this form does not create an attorney-client
                     relationship. For urgent matters, please call {FIRM.phone}.
                   </p>
-                </form>
+                </div>
               </div>
             </FadeIn>
 
